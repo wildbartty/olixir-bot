@@ -1,0 +1,37 @@
+defmodule OlixirBot do
+  @moduledoc """
+  Documentation for OlixirBot.
+  """
+  use Coxir
+
+  def handle_event({:MESSAGE_CREATE, message}, state) do
+    case message.content do
+      "ping!" ->
+        Message.reply(message, "pong!")
+      _ ->
+        :ignore
+    end
+
+    {:ok, state}
+  end
+
+  def handle_event(_event, state) do
+    {:ok, state}
+  end
+end
+
+defmodule Example do
+  use Application
+  use Supervisor
+
+  def start(_type, _args) do
+    children = [
+      worker(Consumer, [])
+    ]
+    options = [
+      strategy: :one_for_one,
+      name: __MODULE__
+    ]
+    Supervisor.start_link(children, options)
+  end
+end
